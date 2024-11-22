@@ -26,6 +26,7 @@ public:
     void showData();
     int indice_cercano(const QVector<double> &vector, double y);
     double PotenciaMecanica_corr();
+    void ValorEfectivo_rec();
 private:
     QVector<double> voltage, current, time;
     int c;

@@ -121,28 +121,38 @@ int MainWindow::indice_cercano(const QVector<double> &vector, double y){
     }
     return a;
 }
-void MainWindow::ValorEfectivo(){
-    double coef = 1/(time[(c-1)] - time[0]);
-    qDebug() << "coeficiente: "<<coef;
+void MainWindow::ValorEfectivo_rec(){
     double Varea=0, Iarea=0;
     for (int i=0; i<(c-1); i++){
-        double Vf = (voltage[i+1] * voltage[i+1]);
-        double Vi = (voltage[i] * voltage[i]);
-        double If = (current[i+1] * current[i+1]);
-        double Ii = (current[i] * current[i]);
-        Varea += (Vi*(time[i+1]-time[i]))+(Vf*(time[i+1]-time[i]));
-        Iarea += (Ii*(time[i+1]-time[i]))+(If*(time[i+1]-time[i]));
+        Varea += ((voltage[i] * voltage[i])*(time[i+1]-time[i]));
+        Iarea += ((current[i] * current[i])*(time[i+1]-time[i]));
     }
     qDebug() << "Varea: "<<Varea;
     qDebug() << "Iarea: "<<Iarea;
-    double aux = coef*Varea;
+    double aux = Varea/(time[(c-1)] - time[0]);;
+    double aux_Vefect = sqrt(aux);
+    qDebug() <<"por el rect Vefec:"<< aux_Vefect;
+    aux = Iarea/(time[(c-1)] - time[0]);;
+    double aux_Iefect = sqrt(aux);
+    qDebug()<<"Iefect:"<<aux_Iefect;
+}
+void MainWindow::ValorEfectivo(){
+    double Varea=0, Iarea=0;
+    for (int i=0; i<(c-1); i++){
+        Varea += (time[i+1]-time[i])*(((voltage[i+1] * voltage[i+1])+(voltage[i] * voltage[i]))/2);
+        Iarea += (time[i+1]-time[i])*(((current[i+1] * current[i+1])+(current[i] * current[i]))/2);
+    }
+    qDebug() << "Varea: "<<Varea;
+    qDebug() << "Iarea: "<<Iarea;
+    double aux = Varea/(time[(c-1)] - time[0]);;
     Vefect = sqrt(aux);
     ui->Vefect->setText(QString("Vefec: %1").arg(Vefect));
     qDebug() << Vefect;
-    aux = coef*Iarea;
+    aux = Iarea/(time[(c-1)] - time[0]);;
     Iefect = sqrt(aux);
     ui->Iefect->setText(QString("Iefec: %1").arg(Iefect));
     qDebug()<<Iefect;
+    //ValorEfectivo_rec();
 }
 double MainWindow::PotenciaMecanica_corr(){
     double area =0;
@@ -158,5 +168,5 @@ void MainWindow::PotenciaMecanica(){
     Power = (Vefect*Iefect*(cos((fi*M_PI)/180)));
     ui->Power->setText(QString("Potencia mecanica: %1").arg(Power));
     double power2 = PotenciaMecanica_corr();
-    qDebug() << "potencia mecanica: " << power2;
+    qDebug() << "Corroboracion potencia mecanica: " << power2;
 }
